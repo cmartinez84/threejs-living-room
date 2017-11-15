@@ -30,8 +30,8 @@ var example = (function(){
         1000
         );
 
-        camera.position.z= 100;
-        camera.position.y= 100;
+        camera.position.z= 1;
+        camera.position.y= 1;
         //_____________Orbit Controls______________________
 
         controls = new THREE.OrbitControls( camera);
@@ -53,9 +53,15 @@ var example = (function(){
 //______________________Cube__________________________
       var textureLoader = new THREE.TextureLoader();
 
+      var eastWall = textureLoader.load( 'content/eastcropped.png' );
+      var westWall = textureLoader.load( 'content/westcropped.png' );
+      var northWall = textureLoader.load( 'content/northcropped.png' );
+      var southWall = textureLoader.load( 'content/southcropped.png' );
+
       var wall = textureLoader.load( 'content/livingroom.jpg' );
-      var floor = textureLoader.load( 'content/tile.jpeg' );
-      var sky = textureLoader.load( 'content/sky.jpg' );
+
+      var floor = textureLoader.load( 'content/woodtile.jpeg' );
+      var ceiling = textureLoader.load( 'content/ceiling.jpg' );
 
 
       floor.wrapS = floor.wrapT = THREE.RepeatWrapping;
@@ -65,21 +71,21 @@ var example = (function(){
       // var ceiling = textureLoader.load( 'content/livingroom.jpg' );
 
       var materials = [
-          new THREE.MeshBasicMaterial( { map: wall, side: THREE.DoubleSide } ),
-          new THREE.MeshBasicMaterial( { map: wall, side: THREE.DoubleSide } ),
-          new THREE.MeshBasicMaterial( { map: sky, side: THREE.DoubleSide } ), //ceiling
+          new THREE.MeshBasicMaterial( { map: southWall, side: THREE.DoubleSide } ),
+          new THREE.MeshBasicMaterial( { map: northWall, side: THREE.DoubleSide } ),
+          new THREE.MeshBasicMaterial( { map: ceiling, side: THREE.DoubleSide } ), //ceiling
           new THREE.MeshBasicMaterial( { map: floor, side: THREE.DoubleSide } ),
-          new THREE.MeshBasicMaterial( { map: wall, side: THREE.DoubleSide } ),
-          new THREE.MeshBasicMaterial( { map: wall, side: THREE.DoubleSide } ),
+          new THREE.MeshBasicMaterial( { map: westWall, side: THREE.DoubleSide } ),
+          new THREE.MeshBasicMaterial( { map: eastWall, side: THREE.DoubleSide } ),
       ];
       var stuff = new THREE.MeshFaceMaterial( materials );
 
 
       cube = new THREE.Mesh(
         new THREE.BoxGeometry(
-          1000,
-          1000,
-          1000),
+          15, //west
+          10,
+          10),
           new THREE.MeshFaceMaterial( materials ),
       );
 
