@@ -7,8 +7,10 @@ var example = (function(){
     pointLight = new THREE.PointLight(0xffffff),
     camera,
     controls,
+    spacesphere,
     directionalLight,
     cube;
+    var woodTable;
 
     ///from audioloader.js
 
@@ -24,7 +26,7 @@ var example = (function(){
 
         //______________Cam Position_____________________
         camera = new THREE.PerspectiveCamera(
-        35,
+        80,
         element.offsetWidth  / element.offsetHeight,
         1,
         1000
@@ -40,7 +42,7 @@ var example = (function(){
 
         directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
         directionalLight.position.z = 2;
-        directionalLight.position.x = 2;
+        directionalLight.position.x = -3.5;
         directionalLight.position.y = 2;
         ///
 
@@ -56,7 +58,7 @@ var example = (function(){
       var eastWall = textureLoader.load( 'content/eastcropped.png' );
       var westWall = textureLoader.load( 'content/westcropped.png' );
       var northWall = textureLoader.load( 'content/northcropped.png' );
-      var southWall = textureLoader.load( 'content/southcropped.png' );
+      var southWalltransparent = textureLoader.load( 'content/southcroppedtransparent.png' );
 
       var wall = textureLoader.load( 'content/livingroom.jpg' );
 
@@ -66,12 +68,12 @@ var example = (function(){
 
       floor.wrapS = floor.wrapT = THREE.RepeatWrapping;
       floor.offset.set( 0, 0 );
-      floor.repeat.set( 10, 10 );
+      floor.repeat.set( 5, 5 );
 
       // var ceiling = textureLoader.load( 'content/livingroom.jpg' );
 
       var materials = [
-          new THREE.MeshBasicMaterial( { map: southWall, side: THREE.DoubleSide } ),
+          new THREE.MeshBasicMaterial( { map: southWalltransparent, side: THREE.DoubleSide, transparent: true } ),
           new THREE.MeshBasicMaterial( { map: northWall, side: THREE.DoubleSide } ),
           new THREE.MeshBasicMaterial( { map: ceiling, side: THREE.DoubleSide } ), //ceiling
           new THREE.MeshBasicMaterial( { map: floor, side: THREE.DoubleSide } ),
@@ -83,29 +85,79 @@ var example = (function(){
 
       cube = new THREE.Mesh(
         new THREE.BoxGeometry(
-          15, //west
-          10,
-          10),
+          5, //west
+          5,
+          5),
           new THREE.MeshFaceMaterial( materials ),
       );
 
       cube.name="cube";
       scene.add(cube);
+
+      //_______________SpaceSphere________________________
+
+      var textureLoader = new THREE.TextureLoader();
+      var spacetex = textureLoader.load( 'content/sky.jpg' );
+
+       var spacesphereGeo = new THREE.SphereGeometry(20,20,20);
+       var spacesphereMat = new THREE.MeshPhongMaterial();
+       spacesphereMat.map = spacetex;
+
+      spacesphere = new THREE.Mesh(spacesphereGeo,spacesphereMat);
+
+       //spacesphere needs to be double sided as the camera is within the spacesphere
+       spacesphere.material.side = THREE.DoubleSide;
+
+       spacesphere.material.map.wrapS = THREE.RepeatWrapping;
+       spacesphere.material.map.wrapT = THREE.RepeatWrapping;
+       spacesphere.material.map.repeat.set( 5, 5);
+
+       scene.add(spacesphere);
+
+       //_______________Load Chair________________________
+      //  var jsonLoader = new THREE.ObjectLoader();
+      //  jsonLoader.setTexturePath('content/skins/');
+      //  console.log(jsonLoader);
+       //
+      //  jsonLoader.load(
+      //      "scripts/arm-chair.json",
+       //
+      //      function ( obj ) {
+      //        woodTable = obj;
+      //        woodTable.position.y = -2.3;
+      //        woodTable.name = 'woodTable';
+      //        scene.add( woodTable );
+      //      },
+       //
+      //      function ( xhr ) {
+      //          console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+      //      },
+       //
+      //      function ( xhr ) {
+      //          console.error( 'An error happened' );
+      //          console.log(xhr);
+      //      }
+      //  );
+
+      //End Object Builds
+
       render();
     } // end init
 //________________________________________________
 
 
     function render() {
+
         renderer.render(scene, camera);
         requestAnimationFrame(render);
         controls.update();
+        spacesphere ? spacesphere.rotation.y +=.001: '';
+        spacesphere ? spacesphere.rotation.z +=.001: '';
     };
 
     window.onload = initScene;
-
     return {
-        scene: scene
+        scene: scene,
     }
 
 })();
