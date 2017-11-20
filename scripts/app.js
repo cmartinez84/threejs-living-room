@@ -9,8 +9,10 @@ var example = (function(){
     controls,
     spacesphere,
     directionalLight,
+    // cone2,
     cube;
     var woodTable;
+    var cone;
 
     ///from audioloader.js
 
@@ -50,7 +52,7 @@ var example = (function(){
         scene.add( directionalLight );
 
 
-        render();
+        // render();
 
 //______________________Cube__________________________
       var textureLoader = new THREE.TextureLoader();
@@ -80,7 +82,7 @@ var example = (function(){
           new THREE.MeshBasicMaterial( { map: westWall, side: THREE.DoubleSide } ),
           new THREE.MeshBasicMaterial( { map: eastWall, side: THREE.DoubleSide } ),
       ];
-      var stuff = new THREE.MeshFaceMaterial( materials );
+      // var stuff = new THREE.MeshFaceMaterial( materials );
 
 
       cube = new THREE.Mesh(
@@ -99,7 +101,7 @@ var example = (function(){
       var textureLoader = new THREE.TextureLoader();
       var spacetex = textureLoader.load( 'content/sky.jpg' );
 
-       var spacesphereGeo = new THREE.SphereGeometry(20,20,20);
+       var spacesphereGeo = new THREE.SphereGeometry(50,50,50);
        var spacesphereMat = new THREE.MeshPhongMaterial();
        spacesphereMat.map = spacetex;
 
@@ -113,6 +115,54 @@ var example = (function(){
        spacesphere.material.map.repeat.set( 5, 5);
 
        scene.add(spacesphere);
+
+       //___________________Cone_____________________________________
+
+       var conetex = textureLoader.load( 'content/stripesforcone.jpg' );
+       var geometry = new THREE.ConeGeometry( 2, 4, 32 );
+       var materials = [new THREE.MeshBasicMaterial(
+         {
+           map: conetex,
+           side: THREE.DoubleSide,
+         }
+       )];
+
+       cone = new THREE.Mesh( geometry, materials );
+       cone.position.set(0,0,0);
+
+
+       scene.add( cone );
+
+       //___________________Audio Setup_____________________________________
+
+
+
+               //Create an AudioListener and add it to the camera
+        var listener = new THREE.AudioListener();
+        camera.add( listener );
+
+        //Create the PositionalAudio object (passing in the listener)
+        var sound = new THREE.PositionalAudio( listener );
+
+        //Load a sound and set it as the PositionalAudio object's buffer
+        var audioLoader = new THREE.AudioLoader();
+        audioLoader.load( 'content/audio/twilight-zone.mp3', function( buffer ) {
+        	sound.setBuffer( buffer );
+        	sound.setRefDistance( 10 );
+          sound.loop = true;
+        	// sound.play();
+
+        });
+
+        //Create an object for the sound to play from
+        // var sphere = new THREE.SphereGeometry( 20, 32, 16 );
+        // var material = new THREE.MeshPhongMaterial( { color: 0xff2200 } );
+        // var mesh = new THREE.Mesh( sphere, material );
+        // scene.add( mesh );
+
+        //Finally add the sound to the mesh
+        cone.add( sound );
+
 
        //_______________Load Chair________________________
       //  var jsonLoader = new THREE.ObjectLoader();
@@ -145,12 +195,27 @@ var example = (function(){
     } // end init
 //________________________________________________
 
+  var t = 0;
+  function orbitCone(){
+    t += 0.001;
+    // t += 0.1;
+    cone.position.x = 20*Math.cos(t) * .8;
+    cone.position.z = 200*Math.sin(t) + 0;
+  }
+  function wabbleCone(){
+    cone.rotation.z += .01;
+    cone.rotation.y += .01;
+    cone.rotation.z += .005;
+  }
 
     function render() {
 
         renderer.render(scene, camera);
         requestAnimationFrame(render);
         controls.update();
+        wabbleCone();
+        orbitCone();
+        // console.log(cone);
         spacesphere ? spacesphere.rotation.y +=.001: '';
         spacesphere ? spacesphere.rotation.z +=.001: '';
     };
