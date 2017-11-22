@@ -150,7 +150,7 @@ var example = (function(){
         	sound.setBuffer( buffer );
         	sound.setRefDistance( 10 );
           sound.loop = true;
-        	// sound.play();
+        	sound.play();
 
         });
 
@@ -197,10 +197,10 @@ var example = (function(){
 
   var t = 0;
   function orbitCone(){
-    t += 0.001;
+    t += 0.01;
     // t += 0.1;
     cone.position.x = 20*Math.cos(t) * .8;
-    cone.position.z = 200*Math.sin(t) + 0;
+    cone.position.z = 20*Math.sin(t) + 0;
   }
   function wabbleCone(){
     cone.rotation.z += .01;
