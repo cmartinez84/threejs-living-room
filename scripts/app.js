@@ -8,6 +8,7 @@ var example = (function(){
     camera,
     controls,
     spacesphere,
+    effect,
     directionalLight,
     // cone2,
     cube;
@@ -27,19 +28,72 @@ var example = (function(){
         light.position.z = 221;
 
         //______________Cam Position_____________________
-        camera = new THREE.PerspectiveCamera(
-        80,
-        element.offsetWidth  / element.offsetHeight,
-        1,
-        1000
-        );
+        // camera = new THREE.PerspectiveCamera(
+        // 80,
+        // element.offsetWidth  / element.offsetHeight,
+        // 1,
+        // 1000
+        // );
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.001, 700);
+        // camera.zoom =   100;
+
 
         camera.position.z= 1;
         camera.position.y= 1;
+        camera.rotation.z= 0;
+        camera.rotation.y= 0;
+        camera.rotation.x= 0;
+        // camera.zoom = 20
         //_____________Orbit Controls______________________
 
         controls = new THREE.OrbitControls( camera);
-				controls.enableZoom = true;
+				// controls.enableZoom = true;
+        controls.keyPanSpeed = 30;
+        // controls.enableKeys = falfse;
+
+        //___________________Stereo_____________________________________
+        effect = new THREE.StereoEffect(renderer);
+        effect.setSize( window.innerWidth, window.innerHeight );
+
+        //___________________Device Orientation Check_____________________________________
+
+        function setOrientationControls(e) {
+          if (!e.alpha) {
+            return;
+          }
+
+          controls = new THREE.DeviceOrientationControls(camera, true);
+          controls.connect();
+          controls.update();
+
+          element.addEventListener('click', fullscreen, false);
+          window.removeEventListener('deviceorientation', setOrientationControls, true);
+          window.addEventListener('orientationchange', ()=>{
+            // camera = new THREE.Perspect/iveCamera(90, window.innerWidth / window.innerHeight, 0.001, 700);
+
+          })
+          }
+
+          function fullscreen() {
+             if (element.requestFullscreen) {
+               element.requestFullscreen();
+             } else if (element.msRequestFullscreen) {
+               element.msRequestFullscreen();
+             } else if (element.mozRequestFullScreen) {
+               element.mozRequestFullScreen();
+             } else if (element.webkitRequestFullscreen) {
+               element.webkitRequestFullscreen();
+             }
+          }
+          // setOrientationControls()
+          window.addEventListener('deviceorientation', setOrientationControls, true);
+
+
+
+
+
         //_____________Directional light______________________
 
         directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
@@ -135,23 +189,31 @@ var example = (function(){
 
        //___________________Audio Setup_____________________________________
 
-
-
                //Create an AudioListener and add it to the camera
         var listener = new THREE.AudioListener();
         camera.add( listener );
 
         //Create the PositionalAudio object (passing in the listener)
-        var sound = new THREE.PositionalAudio( listener );
+        var twiglightZoneGuitar = new THREE.PositionalAudio( listener );
+        var ticktock = new THREE.PositionalAudio( listener );
 
-        //Load a sound and set it as the PositionalAudio object's buffer
+        //Load a twiglightZoneGuitar and set it as the PositionalAudio object's buffer
         var audioLoader = new THREE.AudioLoader();
         audioLoader.load( 'content/audio/twilight-zone.mp3', function( buffer ) {
-        	sound.setBuffer( buffer );
-        	sound.setRefDistance( 10 );
-          sound.loop = true;
-        	sound.play();
+        	twiglightZoneGuitar.setBuffer( buffer );
+        	twiglightZoneGuitar.setRefDistance( 10 );
+          twiglightZoneGuitar.loop = true;
+        	// twiglightZoneGuitar.play();
+        });
 
+
+        var audioLoader = new THREE.AudioLoader();
+        audioLoader.load( 'content/audio/ticktock.mp3', function( buffer ) {
+        	ticktock.setBuffer( buffer );
+        	ticktock.setRefDistance( 10 );
+          ticktock.loop = true;
+          ticktock.playbackRate = 2;
+        	// ticktock.play();you
         });
 
         //Create an object for the sound to play from
@@ -161,7 +223,7 @@ var example = (function(){
         // scene.add( mesh );
 
         //Finally add the sound to the mesh
-        cone.add( sound );
+        cone.add( twiglightZoneGuitar );
 
 
        //_______________Load Chair________________________
@@ -190,10 +252,24 @@ var example = (function(){
       //  );
 
       //End Object Builds
+      document.addEventListener('keydown', moveCamera, false);
 
       render();
     } // end init
 //________________________________________________
+
+
+  function moveCamera(e){
+    //  38, 40, 37 L , 39 R
+    // camera.position.x += .01;
+    if(e.keyCode === 65){
+      camera.position.z += .1;
+    }
+    if(e.keyCode === 90){
+      camera.position.z -= .1;
+    }
+    console.log(e.keyCode);
+  }
 
   var t = 0;
   function orbitCone(){
@@ -210,7 +286,8 @@ var example = (function(){
 
     function render() {
 
-        renderer.render(scene, camera);
+        // renderer.render(scene, camera);
+        effect.render(scene,camera);
         requestAnimationFrame(render);
         controls.update();
         wabbleCone();
