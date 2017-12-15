@@ -163,7 +163,7 @@ var example = (function(){
       var textureLoader = new THREE.TextureLoader();
       var spacetex = textureLoader.load( 'content/sky.jpg' );
 
-       var spacesphereGeo = new THREE.SphereGeometry(50,50,50);
+       var spacesphereGeo = new THREE.SphereGeometry(400,400,50);
        var spacesphereMat = new THREE.MeshPhongMaterial();
        spacesphereMat.map = spacetex;
 
@@ -176,12 +176,13 @@ var example = (function(){
        spacesphere.material.map.wrapT = THREE.RepeatWrapping;
        spacesphere.material.map.repeat.set( 5, 5);
 
-      //  scene.add(spacesphere);
+       scene.add(spacesphere);
 
        //___________________Cone_____________________________________
 
        var conetex = textureLoader.load( 'content/stripesforcone.jpg' );
        var geometry = new THREE.ConeGeometry( 2, 4, 32 );
+       var geometry = new THREE.ConeGeometry( 12, 14, 62 );
        var materials = [new THREE.MeshBasicMaterial(
          {
            map: conetex,
@@ -292,8 +293,8 @@ var example = (function(){
   function orbitCone(){
     t += 0.01;
     // t += 0.1;
-    cone.position.x = 20*Math.cos(t) * .8;
-    cone.position.z = 20*Math.sin(t) + 0;
+    cone.position.x = 200*Math.cos(t) * .8;
+    cone.position.z = 200*Math.sin(t) + 0;
   }
   function wabbleCone(){
     cone.rotation.z += .01;
