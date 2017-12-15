@@ -1,11 +1,17 @@
+var scene=new THREE.Scene();
+var renderer = window.WebGLRenderingContext ? new THREE.WebGLRenderer() : new THREE.CanvasRenderer();
+
+var camera;
+
+
 var example = (function(){
 
     "use strict";
-    var scene=new THREE.Scene(),
-    renderer = window.WebGLRenderingContext ? new THREE.WebGLRenderer() : new THREE.CanvasRenderer(),
-    light= new THREE.AmbientLight(0xffffff, .2),
+    // var scene=new THREE.Scene(),
+    // renderer = window.WebGLRenderingContext ? new THREE.WebGLRenderer() : new THREE.CanvasRenderer(),
+    var light= new THREE.AmbientLight(0xffffff, .2),
     pointLight = new THREE.PointLight(0xffffff),
-    camera,
+    // camera,
     controls,
     spacesphere,
     effect,
@@ -14,8 +20,6 @@ var example = (function(){
     cube;
     var woodTable;
     var cone;
-
-    ///from audioloader.js
 
     function initScene(){
 
@@ -48,10 +52,16 @@ var example = (function(){
         // camera.zoom = 20
         //_____________Orbit Controls______________________
 
-        controls = new THREE.OrbitControls( camera);
+        // controls = new THREE.OrbitControls( camera);
 				// controls.enableZoom = true;
-        controls.keyPanSpeed = 30;
+        // controls.keyPanSpeed = 30;
         // controls.enableKeys = falfse;
+
+        //_____________Integrate Pointer Lock Controls______________________
+
+
+        initPointerLockSetup();
+
 
         //___________________Stereo_____________________________________
         effect = new THREE.StereoEffect(renderer);
@@ -64,9 +74,9 @@ var example = (function(){
             return;
           }
 
-          controls = new THREE.DeviceOrientationControls(camera, true);
-          controls.connect();
-          controls.update();
+          // controls = new THREE.DeviceOrientationControls(camera, true);
+          // controls.connect();
+          // controls.update();
 
           element.addEventListener('click', fullscreen, false);
           window.removeEventListener('deviceorientation', setOrientationControls, true);
@@ -88,9 +98,7 @@ var example = (function(){
              }
           }
           // setOrientationControls()
-          window.addEventListener('deviceorientation', setOrientationControls, true);
-
-
+          // window.addEventListener('deviceorientation', setOrientationControls, true);
 
 
 
@@ -102,7 +110,7 @@ var example = (function(){
         directionalLight.position.y = 2;
         ///
 
-        scene.add( camera );
+        // scene.add( camera );
         scene.add( directionalLight );
 
 
@@ -141,9 +149,9 @@ var example = (function(){
 
       cube = new THREE.Mesh(
         new THREE.BoxGeometry(
-          5, //west
-          5,
-          5),
+          100, //west
+          100,
+          100),
           new THREE.MeshFaceMaterial( materials ),
       );
 
@@ -168,7 +176,7 @@ var example = (function(){
        spacesphere.material.map.wrapT = THREE.RepeatWrapping;
        spacesphere.material.map.repeat.set( 5, 5);
 
-       scene.add(spacesphere);
+      //  scene.add(spacesphere);
 
        //___________________Cone_____________________________________
 
@@ -271,6 +279,15 @@ var example = (function(){
     console.log(e.keyCode);
   }
 
+  function onWindowResize() {
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize( window.innerWidth, window.innerHeight );
+
+  }
+
   var t = 0;
   function orbitCone(){
     t += 0.01;
@@ -288,8 +305,10 @@ var example = (function(){
 
         // renderer.render(scene, camera);
         effect.render(scene,camera);
+        updatePointerLockControls();
+
         requestAnimationFrame(render);
-        controls.update();
+        // controls.update(); ///renable for other controls
         wabbleCone();
         orbitCone();
         // console.log(cone);
